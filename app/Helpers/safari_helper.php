@@ -163,3 +163,87 @@ if (! function_exists('form_field_type_options')) {
         ];
     }
 }
+
+if (! function_exists('submission_value_text')) {
+    function submission_value_text(array $value): string
+    {
+        return (string) (
+            $value['nilai_longtext']
+            ?? $value['nilai_text']
+            ?? $value['nilai_date']
+            ?? $value['nilai_number']
+            ?? $value['nilai_json']
+            ?? '-'
+        );
+    }
+}
+
+if (! function_exists('submission_identity')) {
+    function submission_identity(array $submission, array $values = []): array
+    {
+        $identity = [
+            'applicant_name' => (string) ($submission['applicant_name'] ?? $submission['nama_pengaju'] ?? ''),
+            'applicant_email' => (string) ($submission['applicant_email'] ?? $submission['email'] ?? ''),
+            'nidn_nip' => (string) ($submission['nidn_nip'] ?? ''),
+            'unit_kerja' => (string) ($submission['unit_kerja'] ?? ''),
+            'applicant_phone' => (string) ($submission['applicant_phone'] ?? $submission['no_hp'] ?? ''),
+        ];
+
+        if ($values === []) {
+            return $identity;
+        }
+
+        $indexed = [];
+        foreach ($values as $value) {
+            $key = strtolower(trim((string) (($value['label_field'] ?? $value['nama_field'] ?? ''))));
+            if ($key === '') {
+                continue;
+            }
+
+            $indexed[$key] = submission_value_text($value);
+        }
+
+        if ($identity['applicant_name'] === '') {
+            $identity['applicant_name'] = submission_identity_match($indexed, ['nama lengkap', 'nama pengirim', 'nama pemohon', 'nama dosen', 'nama mahasiswa', 'nama']);
+        }
+
+        if ($identity['applicant_email'] === '') {
+            $identity['applicant_email'] = submission_identity_match($indexed, ['email aktif', 'email pemohon', 'email peneliti', 'email', 'alamat email']);
+        }
+
+        if ($identity['nidn_nip'] === '') {
+            $identity['nidn_nip'] = submission_identity_match($indexed, ['nidn / nip', 'nidn/nip', 'nidn', 'nip', 'nuptk', 'nik']);
+        }
+
+        if ($identity['unit_kerja'] === '') {
+            $identity['unit_kerja'] = submission_identity_match($indexed, ['unit kerja', 'fakultas', 'program studi', 'prodi', 'instansi', 'bagian']);
+        }
+
+        if ($identity['applicant_phone'] === '') {
+            $identity['applicant_phone'] = submission_identity_match($indexed, ['telepon', 'nomor whatsapp', 'whatsapp', 'no hp', 'nomor hp', 'no. hp']);
+        }
+
+        return $identity;
+    }
+}
+
+if (! function_exists('submission_identity_match')) {
+    function submission_identity_match(array $indexedValues, array $candidates): string
+    {
+        foreach ($candidates as $candidate) {
+            $candidate = strtolower($candidate);
+
+            foreach ($indexedValues as $key => $value) {
+                if ($value === '' || $value === '-') {
+                    continue;
+                }
+
+                if ($key === $candidate || str_contains($key, $candidate) || str_contains($candidate, $key)) {
+                    return $value;
+                }
+            }
+        }
+
+        return '';
+    }
+}
