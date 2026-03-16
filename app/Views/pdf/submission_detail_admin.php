@@ -22,6 +22,33 @@
     </style>
 </head>
 <body>
+    <?php
+        $identity = submission_identity($submission, $values);
+        $identityRows = [
+            [
+                ['label' => 'Nomor Pengajuan', 'value' => $submission['submission_code'] ?? ''],
+                ['label' => 'Tanggal Pengajuan', 'value' => $submission['submitted_at'] ?? ''],
+            ],
+            [
+                ['label' => 'Pengirim Formulir', 'value' => $identity['applicant_name'] ?? ''],
+                ['label' => 'Formulir', 'value' => $submission['form_name'] ?? ''],
+            ],
+        ];
+
+        $optionalCells = array_values(array_filter([
+            ['label' => 'Email', 'value' => $identity['applicant_email'] ?? ''],
+            ['label' => 'Telepon', 'value' => $identity['applicant_phone'] ?? ''],
+            ['label' => 'NIDN / NIP', 'value' => $identity['nidn_nip'] ?? ''],
+            ['label' => 'Unit Kerja', 'value' => $identity['unit_kerja'] ?? ''],
+        ], static fn (array $item): bool => trim((string) $item['value']) !== '' && trim((string) $item['value']) !== '-'));
+
+        foreach (array_chunk($optionalCells, 2) as $chunk) {
+            $identityRows[] = [
+                $chunk[0] ?? null,
+                $chunk[1] ?? null,
+            ];
+        }
+    ?>
     <div class="header">
         <table class="brand-table">
             <tr>
@@ -38,38 +65,22 @@
     <div class="identity-box">
         <div class="section-title">Identitas Pengirim Formulir</div>
         <table class="identity-table">
-            <tr>
-                <td class="identity-label">Nomor Pengajuan</td>
-                <td class="identity-sep">:</td>
-                <td class="identity-value"><?= esc($submission['submission_code']) ?></td>
-                <td class="identity-label">Tanggal Pengajuan</td>
-                <td class="identity-sep">:</td>
-                <td class="identity-value"><?= esc($submission['submitted_at']) ?></td>
-            </tr>
-            <tr>
-                <td class="identity-label">Formulir</td>
-                <td class="identity-sep">:</td>
-                <td class="identity-value"><?= esc($submission['form_name']) ?></td>
-                <td class="identity-label">Pengirim Formulir</td>
-                <td class="identity-sep">:</td>
-                <td class="identity-value"><?= esc($submission['applicant_name']) ?></td>
-            </tr>
-            <tr>
-                <td class="identity-label">Email</td>
-                <td class="identity-sep">:</td>
-                <td class="identity-value"><?= esc($submission['applicant_email']) ?></td>
-                <td class="identity-label">Telepon</td>
-                <td class="identity-sep">:</td>
-                <td class="identity-value"><?= esc($submission['applicant_phone'] ?: '-') ?></td>
-            </tr>
-            <tr>
-                <td class="identity-label">NIDN / NIP</td>
-                <td class="identity-sep">:</td>
-                <td class="identity-value"><?= esc($submission['nidn_nip'] ?: '-') ?></td>
-                <td class="identity-label">Unit Kerja</td>
-                <td class="identity-sep">:</td>
-                <td class="identity-value"><?= esc($submission['unit_kerja'] ?: '-') ?></td>
-            </tr>
+            <?php foreach ($identityRows as [$left, $right]): ?>
+                <tr>
+                    <td class="identity-label"><?= esc($left['label']) ?></td>
+                    <td class="identity-sep">:</td>
+                    <td class="identity-value"><?= esc($left['value']) ?></td>
+                    <?php if ($right !== null): ?>
+                        <td class="identity-label"><?= esc($right['label']) ?></td>
+                        <td class="identity-sep">:</td>
+                        <td class="identity-value"><?= esc($right['value']) ?></td>
+                    <?php else: ?>
+                        <td class="identity-label"></td>
+                        <td class="identity-sep"></td>
+                        <td class="identity-value"></td>
+                    <?php endif; ?>
+                </tr>
+            <?php endforeach; ?>
         </table>
     </div>
     <h3 class="section-title">Data Formulir</h3>
