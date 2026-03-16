@@ -25,7 +25,7 @@ class SubmissionController extends BaseController
         $builder = $submissionModel->applyAdminFilters($filters);
 
         return view('admin/submissions/index', [
-            'submissions' => $builder->paginate(10),
+            'submissions' => $builder->paginate(10, 'default'),
             'pager' => $submissionModel->pager,
             'filters' => $filters,
             'categories' => (new FormCategoryModel())->orderBy('urutan', 'ASC')->findAll(),
