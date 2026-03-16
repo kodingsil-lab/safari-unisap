@@ -31,8 +31,16 @@ class StatusController extends BaseController
     {
         return [
             'submission' => $submission,
-            'values' => (new SubmissionValueModel())->where('submission_id', $submission['id'])->findAll(),
-            'files' => (new SubmissionFileModel())->where('submission_id', $submission['id'])->findAll(),
+            'values' => (new SubmissionValueModel())
+                ->select('submission_values.*, form_fields.label_field')
+                ->join('form_fields', 'form_fields.id = submission_values.form_field_id', 'left')
+                ->where('submission_id', $submission['id'])
+                ->findAll(),
+            'files' => (new SubmissionFileModel())
+                ->select('submission_files.*, form_fields.label_field')
+                ->join('form_fields', 'form_fields.id = submission_files.form_field_id', 'left')
+                ->where('submission_id', $submission['id'])
+                ->findAll(),
         ];
     }
 }

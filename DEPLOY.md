@@ -4,8 +4,9 @@ Pola deploy yang dipakai:
 
 - source code disimpan di `~/apps/safari-unisap/releases/{timestamp}`
 - symlink aktif ada di `~/apps/safari-unisap/current`
-- web root domain diarahkan ke:
-  - `/home/u541589701/domains/safari.unisap.ac.id/public_html -> ~/apps/safari-unisap/current/public`
+- folder web root tetap:
+  - `/home/u541589701/domains/safari.unisap.ac.id/public_html`
+- isi folder `public` dari release aktif akan disalin ke `public_html`
 - file yang dipertahankan antar deploy:
   - `.env`
   - `writable/`
@@ -59,6 +60,7 @@ Yang wajib diisi:
 
 - Pastikan `composer` tersedia di server.
 - Pastikan domain `safari.unisap.ac.id` sudah mengarah ke folder `public_html`.
-- Jika `public_html` sudah berupa folder biasa, backup dulu sebelum dipakai symlink.
+- Script deploy ini tidak lagi mengandalkan symlink `public_html`, jadi lebih aman untuk Hostinger.
+- File `public_html/index.php` akan otomatis disesuaikan agar mengarah ke `~/apps/safari-unisap/current/app/Config/Paths.php`.
 - Upload logo kampus dari aplikasi akan tetap aman karena `public/uploads/` ikut dishare.
 - Lampiran formulir tetap aman karena `writable/uploads/` ikut dishare.

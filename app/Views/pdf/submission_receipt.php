@@ -42,7 +42,10 @@
     <table>
         <tbody>
         <?php foreach ($values as $value): ?>
-            <tr><th><?= esc($value['nama_field']) ?></th><td><?= esc($value['nilai_longtext'] ?: $value['nilai_text'] ?: $value['nilai_date'] ?: $value['nilai_number'] ?: $value['nilai_json'] ?: '-') ?></td></tr>
+            <tr><th><?= esc($value['label_field'] ?: $value['nama_field']) ?></th><td><?= esc($value['nilai_longtext'] ?: $value['nilai_text'] ?: $value['nilai_date'] ?: $value['nilai_number'] ?: $value['nilai_json'] ?: '-') ?></td></tr>
+        <?php endforeach; ?>
+        <?php foreach ($files as $file): ?>
+            <tr><th><?= esc($file['label_field'] ?: ('Lampiran #' . $file['form_field_id'])) ?></th><td><?= esc($file['nama_file_asli']) ?></td></tr>
         <?php endforeach; ?>
         </tbody>
     </table>

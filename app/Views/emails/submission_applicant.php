@@ -14,7 +14,7 @@
                             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ffffff;border-radius:20px;overflow:hidden;border:1px solid #d7e3f1;">
                                 <tr>
                                     <td style="background:#eaf2ff;padding:28px 32px 18px;text-align:center;">
-                                        <img src="<?= base_url('assets/img/logo-unisap.svg') ?>" alt="Logo Kampus" width="72" style="display:block;margin:0 auto 14px;">
+                                        <img src="<?= app_logo_url() ?>" alt="Logo Kampus" width="72" style="display:block;margin:0 auto 14px;">
                                         <div style="font-size:16px;font-weight:700;color:#1e3a8a;"><?= esc($siteName) ?></div>
                                         <div style="font-size:13px;color:#475569;"><?= esc($siteTagline) ?></div>
                                     </td>

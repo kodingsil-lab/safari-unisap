@@ -39,6 +39,7 @@ ensure_dir "$SHARED_DIR/writable/session"
 ensure_dir "$SHARED_DIR/writable/uploads"
 ensure_dir "$SHARED_DIR/writable/debugbar"
 ensure_dir "$SHARED_DIR/public/uploads"
+ensure_dir "$PUBLIC_HTML"
 
 if [[ ! -f "$SHARED_DIR/.env" ]]; then
     say "Membuat template .env awal di shared"
@@ -92,8 +93,13 @@ php spark migrate --all --no-header
 
 say "Mengaktifkan release baru"
 ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
-ln -sfn "$CURRENT_LINK/public" "$PUBLIC_HTML"
+
+say "Menyinkronkan folder public ke public_html"
+rsync -av --delete "$CURRENT_LINK/public/" "$PUBLIC_HTML/"
+
+say "Menyesuaikan front controller public_html"
+sed -i "s|require FCPATH \. '../app/Config/Paths.php';|require '$CURRENT_LINK/app/Config/Paths.php';|" "$PUBLIC_HTML/index.php"
 
 say "Deploy selesai"
 say "Release aktif: $RELEASE_DIR"
-say "Public path: $PUBLIC_HTML -> $CURRENT_LINK/public"
+say "Public path disinkronkan ke: $PUBLIC_HTML"
