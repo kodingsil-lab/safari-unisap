@@ -35,6 +35,11 @@
         .form-label { font-size:.95rem; margin-bottom:.55rem; color:var(--ink); }
         .form-control { border-radius:1rem; min-height:56px; border-color:#d7e2ee; padding:0 1rem; box-shadow:none; }
         .form-control:focus { border-color:#93c5fd; box-shadow:0 0 0 .2rem rgba(59,130,246,.12); }
+        .password-wrap { position:relative; }
+        .password-input { padding-right:3.5rem; }
+        .password-toggle { position:absolute; top:50%; right:.8rem; transform:translateY(-50%); width:2.4rem; height:2.4rem; border:none; border-radius:.85rem; background:#eef4ff; color:var(--brand); display:inline-flex; align-items:center; justify-content:center; transition:all .18s ease; }
+        .password-toggle:hover { background:#dbeafe; color:#1d4ed8; }
+        .password-toggle:focus { outline:none; box-shadow:0 0 0 .2rem rgba(59,130,246,.14); }
         .btn-login { min-height:56px; background:linear-gradient(135deg,#1f3b8a,#0f172a); border:none; letter-spacing:-.01em; box-shadow:0 18px 26px rgba(15,23,42,.18); }
         .btn-login:hover { background:linear-gradient(135deg,#1d4ed8,#0f172a); }
         .login-note { margin-top:1.15rem; padding-top:1rem; border-top:1px solid #edf2f7; color:var(--muted); font-size:.88rem; line-height:1.6; }
@@ -46,6 +51,21 @@
             .login-shell { grid-template-columns:1fr; }
             .login-panel { display:none; }
             .login-card { max-width:520px; margin-inline:auto; }
+        }
+        @media (max-width: 575.98px) {
+            body { display:block; padding:1rem 0; }
+            .login-wrap { width:100%; }
+            .login-card { padding:1.35rem 1rem 1.1rem; border-radius:1.35rem; max-width:none; }
+            .login-logo-frame { width:74px; height:74px; margin-bottom:1rem; }
+            .login-logo-frame img { width:50px; height:50px; }
+            .login-eyebrow { font-size:.76rem; letter-spacing:.12em; margin-bottom:.35rem; }
+            .login-headline { font-size:1.65rem; margin-bottom:.35rem; }
+            .login-subtitle { font-size:.92rem; line-height:1.5; }
+            .form-label { font-size:.9rem; margin-bottom:.45rem; }
+            .form-control { min-height:50px; border-radius:.9rem; font-size:.97rem; }
+            .password-toggle { width:2.2rem; height:2.2rem; right:.65rem; border-radius:.75rem; }
+            .btn-login { min-height:50px; font-size:1rem; }
+            .login-note { font-size:.82rem; margin-top:.9rem; padding-top:.85rem; }
         }
     </style>
 </head>
@@ -96,7 +116,12 @@
                     </div>
                     <div class="mb-4">
                         <label class="form-label fw-semibold">Password</label>
-                        <input type="password" name="password" class="form-control form-control-lg" placeholder="Masukkan password">
+                        <div class="password-wrap">
+                            <input type="password" name="password" id="password-field" class="form-control form-control-lg password-input" placeholder="Masukkan password">
+                            <button type="button" class="password-toggle" id="password-toggle" aria-label="Tampilkan password" aria-pressed="false">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-dark btn-lg w-100 rounded-pill btn-login">Masuk ke Panel Admin</button>
                 </form>
@@ -106,5 +131,25 @@
             </div>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const passwordField = document.getElementById('password-field');
+            const toggleButton = document.getElementById('password-toggle');
+
+            if (!passwordField || !toggleButton) {
+                return;
+            }
+
+            toggleButton.addEventListener('click', function () {
+                const showPassword = passwordField.type === 'password';
+                passwordField.type = showPassword ? 'text' : 'password';
+                toggleButton.setAttribute('aria-pressed', showPassword ? 'true' : 'false');
+                toggleButton.setAttribute('aria-label', showPassword ? 'Sembunyikan password' : 'Tampilkan password');
+                toggleButton.innerHTML = showPassword
+                    ? '<i class="bi bi-eye-slash"></i>'
+                    : '<i class="bi bi-eye"></i>';
+            });
+        });
+    </script>
 </body>
 </html>
