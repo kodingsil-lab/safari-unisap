@@ -1,3 +1,4 @@
+<?= $identity = submission_identity($submission, $values); ?>
 <?= $this->extend('layouts/admin') ?>
 <?= $this->section('content') ?>
 <div class="row g-4">
@@ -7,11 +8,11 @@
             <h3 class="fw-bold"><?= esc($submission['submission_code']) ?></h3>
             <hr>
             <p class="mb-1"><strong>Formulir:</strong> <?= esc($submission['form_name']) ?></p>
-            <p class="mb-1"><strong>Nama:</strong> <?= esc($submission['applicant_name']) ?></p>
-            <p class="mb-1"><strong>NIDN/NIP:</strong> <?= esc($submission['nidn_nip'] ?: '-') ?></p>
-            <p class="mb-1"><strong>Unit Kerja:</strong> <?= esc($submission['unit_kerja'] ?: '-') ?></p>
-            <p class="mb-1"><strong>Email:</strong> <?= esc($submission['applicant_email']) ?></p>
-            <p class="mb-0"><strong>Telepon:</strong> <?= esc($submission['applicant_phone']) ?></p>
+            <p class="mb-1"><strong>Nama:</strong> <?= esc($identity['applicant_name'] ?: '-') ?></p>
+            <p class="mb-1"><strong>NIDN/NIP:</strong> <?= esc($identity['nidn_nip'] ?: '-') ?></p>
+            <p class="mb-1"><strong>Unit Kerja:</strong> <?= esc($identity['unit_kerja'] ?: '-') ?></p>
+            <p class="mb-1"><strong>Email:</strong> <?= esc($identity['applicant_email'] ?: '-') ?></p>
+            <p class="mb-0"><strong>Telepon:</strong> <?= esc($identity['applicant_phone'] ?: '-') ?></p>
             <div class="admin-form-actions mt-4">
                 <a href="<?= site_url('admin/export/pengajuan/' . $submission['id'] . '/pdf') ?>" class="btn btn-danger rounded-pill px-3">Unduh PDF Detail</a>
             </div>
