@@ -88,15 +88,16 @@ class FormController extends BaseController
         $db->transStart();
 
         $submissionCode = (new SubmissionCodeService())->generate();
+        $identity = $this->extractSubmissionIdentity($fields);
         $submissionModel = new SubmissionModel();
         $submissionId = $submissionModel->insert([
             'form_type_id' => $form['id'],
             'kode_pengajuan' => $submissionCode,
-            'nama_pengaju' => (string) ($this->request->getPost('applicant_name') ?: $this->request->getPost('nama_pengaju')),
-            'nidn_nip' => (string) $this->request->getPost('nidn_nip'),
-            'unit_kerja' => (string) $this->request->getPost('unit_kerja'),
-            'email' => (string) ($this->request->getPost('applicant_email') ?: $this->request->getPost('email')),
-            'no_hp' => (string) ($this->request->getPost('applicant_phone') ?: $this->request->getPost('no_hp')),
+            'nama_pengaju' => $identity['nama_pengaju'],
+            'nidn_nip' => $identity['nidn_nip'],
+            'unit_kerja' => $identity['unit_kerja'],
+            'email' => $identity['email'],
+            'no_hp' => $identity['no_hp'],
             'tanggal_pengajuan' => date('Y-m-d H:i:s'),
             'submitted_ip' => $this->request->getIPAddress(),
             'submitted_user_agent' => substr((string) $this->request->getUserAgent(), 0, 500),
@@ -289,5 +290,37 @@ class FormController extends BaseController
             'checkbox', 'select', 'radio' => ['nilai_json' => is_array($value) ? json_encode($value, JSON_UNESCAPED_UNICODE) : ($value !== null ? json_encode([$value], JSON_UNESCAPED_UNICODE) : null), 'nilai_text' => is_array($value) ? implode(', ', $value) : (string) $value],
             default => ['nilai_text' => (string) $value],
         };
+    }
+
+    private function extractSubmissionIdentity(array $fields): array
+    {
+        $values = [];
+
+        foreach ($fields as $field) {
+            if ($field['field_type'] === 'file') {
+                continue;
+            }
+
+            $value = $this->request->getPost($field['name']);
+            if (is_array($value)) {
+                $value = implode(', ', $value);
+            }
+
+            $values[] = [
+                'label_field' => $field['label'],
+                'nama_field' => $field['name'],
+                'nilai_text' => (string) $value,
+            ];
+        }
+
+        $identity = submission_identity([], $values);
+
+        return [
+            'nama_pengaju' => $identity['applicant_name'] ?: '',
+            'nidn_nip' => $identity['nidn_nip'] ?: '',
+            'unit_kerja' => $identity['unit_kerja'] ?: '',
+            'email' => $identity['applicant_email'] ?: '',
+            'no_hp' => $identity['applicant_phone'] ?: '',
+        ];
     }
 }
