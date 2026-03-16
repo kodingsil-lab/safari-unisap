@@ -17,6 +17,17 @@
     </style>
 </head>
 <body>
+    <?php
+        $identity = submission_identity($submission, $values);
+        $summaryItems = [
+            ['label' => 'Nomor Pengajuan', 'value' => $submission['submission_code'] ?? ''],
+            ['label' => 'Pengirim Formulir', 'value' => $identity['applicant_name'] ?? ''],
+            ['label' => 'Nama Formulir', 'value' => $submission['form_name'] ?? ''],
+            ['label' => 'Email', 'value' => $identity['applicant_email'] ?? ''],
+            ['label' => 'Tanggal Pengajuan', 'value' => $submission['submitted_at'] ?? ''],
+        ];
+        $summaryItems = array_values(array_filter($summaryItems, static fn (array $item): bool => trim((string) $item['value']) !== '' && trim((string) $item['value']) !== '-'));
+    ?>
     <div class="header">
         <table class="brand-table">
             <tr>
@@ -31,11 +42,9 @@
     </div>
 
     <div class="box">
-        <p><strong>Nomor Pengajuan:</strong> <?= esc($submission['submission_code']) ?></p>
-        <p><strong>Nama Formulir:</strong> <?= esc($submission['form_name']) ?></p>
-        <p><strong>Pengirim Formulir:</strong> <?= esc($submission['applicant_name']) ?></p>
-        <p><strong>Email:</strong> <?= esc($submission['applicant_email']) ?></p>
-        <p><strong>Tanggal Pengajuan:</strong> <?= esc($submission['submitted_at']) ?></p>
+        <?php foreach ($summaryItems as $item): ?>
+            <p><strong><?= esc($item['label']) ?>:</strong> <?= esc($item['value']) ?></p>
+        <?php endforeach; ?>
     </div>
 
     <h3>Detail Data Pengajuan</h3>
