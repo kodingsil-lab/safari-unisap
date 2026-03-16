@@ -39,7 +39,6 @@
             </div>
             <button type="submit" class="btn btn-dark btn-lg w-100 rounded-pill">Masuk</button>
         </form>
-        <div class="small text-secondary mt-4">Akun awal admin: <strong>admin</strong> / <strong>admin12345</strong></div>
     </div>
 </body>
 </html>
